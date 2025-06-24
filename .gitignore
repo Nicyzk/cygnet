@@ -1,0 +1,5 @@
+build/
+Testing/
+.cache/
+.VSCodeCounter/
+.vscode/
