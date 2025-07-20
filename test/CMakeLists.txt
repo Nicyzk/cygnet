@@ -26,7 +26,7 @@ function(add_memcheck_test name binary)
   add_test(memcheck_${name} ${memcheck_command} ./${binary} ${ARGN})
 endfunction(add_memcheck_test)
 
-list(APPEND MYTESTS disk_manager_test buffer_manager_test)
+list(APPEND MYTESTS disk_manager_test buffer_manager_test column_segment_test)
 foreach(mytest ${MYTESTS})
   add_executable(${mytest} ${mytest}.cxx)
   target_include_directories(${mytest} PUBLIC
@@ -39,5 +39,4 @@ foreach(mytest ${MYTESTS})
   else()
     add_memcheck_test(${mytest} ${mytest})
   endif()
-
 endforeach()

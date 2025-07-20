@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <iostream>
 #include "page_guard.h"
+#include <cassert>
 
 Frame::Frame(frame_id_t frame_id): frame_id_(frame_id), dirty_(false), pincount_(0) {
     data_ = new char[PAGE_SIZE];
@@ -129,7 +130,7 @@ bool BufferManager::DeletePage(page_id_t page_id) {
     return true;
 }
 
-std::optional<GuardedPageReader> BufferManager::GetGuardedPageReader(page_id_t page_id) {
+std::optional<GuardedPageReader> BufferManager::GetGuardedPageReaderNoCheck(page_id_t page_id) {
     bpm_latch_->lock();
 
     /* If page not in memory and not on disk i.e. INVALID_PAGE_ID, return nullopt. */
@@ -181,7 +182,13 @@ std::optional<GuardedPageReader> BufferManager::GetGuardedPageReader(page_id_t p
     return std::optional<GuardedPageReader>(std::move(guard));
 }
 
-std::optional<GuardedPageWriter> BufferManager::GetGuardedPageWriter(page_id_t page_id) {
+GuardedPageReader BufferManager::GetGuardedPageReader(page_id_t page_id) {
+    std::optional<GuardedPageReader> read_guard_opt = GetGuardedPageReaderNoCheck(page_id);
+    assert(read_guard_opt.has_value());
+    return std::move(read_guard_opt.value());
+}
+
+std::optional<GuardedPageWriter> BufferManager::GetGuardedPageWriterNoCheck(page_id_t page_id) {
     bpm_latch_->lock();
 
     /* If page not in memory and not on disk, return nullopt. */
@@ -230,6 +237,13 @@ std::optional<GuardedPageWriter> BufferManager::GetGuardedPageWriter(page_id_t p
         lru_k_replacer_, background_scheduler_ 
     };
     return std::optional<GuardedPageWriter>(std::move(guard));
+}
+
+
+GuardedPageWriter BufferManager::GetGuardedPageWriter(page_id_t page_id) {
+    std::optional<GuardedPageWriter> write_guard_opt = GetGuardedPageWriterNoCheck(page_id);
+    assert(write_guard_opt.has_value());
+    return std::move(write_guard_opt.value());
 }
 
 std::optional<size_t> BufferManager::GetPinCount(page_id_t page_id) {

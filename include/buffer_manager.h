@@ -80,10 +80,16 @@ class BufferManager {
         bool DeletePage(page_id_t page_id);
 
         /* Performs 1. reading from in-memory page. */
-        std::optional<GuardedPageReader> GetGuardedPageReader(page_id_t page_id);
+        std::optional<GuardedPageReader> GetGuardedPageReaderNoCheck(page_id_t page_id);
 
         /* Performs 1. writing to in-memory page, and 2. flushing to disk. */
-        std::optional<GuardedPageWriter> GetGuardedPageWriter(page_id_t page_id);
+        std::optional<GuardedPageWriter> GetGuardedPageWriterNoCheck(page_id_t page_id);
+
+        /* Calls GetGuardedPageReaderNoCheck and aborts if reader invalid. */
+        GuardedPageReader GetGuardedPageReader(page_id_t page_id);
+
+        /* Calls GetGuardedPageWriterNoCheck and aborts if writer invalid. */
+        GuardedPageWriter GetGuardedPageWriter(page_id_t page_id);
 
         std::optional<size_t> GetPinCount(page_id_t page_id);
 };

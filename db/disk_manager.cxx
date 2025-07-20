@@ -5,7 +5,7 @@
 #include "disk_manager.h"
 #include "common.h"
 
-DiskManager::DiskManager(const std::filesystem::path &db_path): db_path_(db_path) {
+DiskManager::DiskManager(const std::filesystem::path &db_path, const idx_t page_size): db_path_(db_path), page_size_(page_size) {
     db_io_.open(db_path, std::ios::binary | std::ios::out | std::ios::in);
 
     if (!db_io_.is_open()) {

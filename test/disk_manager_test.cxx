@@ -1,8 +1,9 @@
+#include "common.h"
 #include "disk_manager.h"
 #include <gtest/gtest.h>
 #include <memory>
 
-std::filesystem::path db_path("../dbfile");
+std::filesystem::path db_path(DB_PATH);
 
 class DiskManagerTest: public testing::Test {
     protected:
@@ -10,11 +11,11 @@ class DiskManagerTest: public testing::Test {
 
         void CreateDB() {
             std::filesystem::remove(db_path);
-            dm_ = std::make_unique<DiskManager>(db_path);
+            dm_ = std::make_unique<DiskManager>(db_path, PAGE_SIZE);
         }
 
         void OpenDB() {
-            dm_ = std::make_unique<DiskManager>(db_path);
+            dm_ = std::make_unique<DiskManager>(db_path, PAGE_SIZE);
         }
 };
 

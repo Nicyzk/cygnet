@@ -15,9 +15,10 @@ class DiskManager {
         std::vector<size_t> free_slots_;
         size_t db_capacity_;
         std::mutex db_io_latch_;
+        const idx_t page_size_;
 
     public:
-        DiskManager(const std::filesystem::path &db_path);
+        DiskManager(const std::filesystem::path &db_path, idx_t page_size);
 
         ~DiskManager() = default;
 
@@ -34,4 +35,6 @@ class DiskManager {
         void DeletePage(page_id_t);
 
         bool CheckPageExists(page_id_t);
+
+        idx_t GetPageSize() { return page_size_; }
 };
